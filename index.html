@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
+    <title>Demo - MCC Team Builder</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id = "headerDiv">
+        <h1>MCC Team Builder</h1>
+    </div>
+
+    <section id="container">
+        <div id="playersDiv">
+            <input id="searchBar" type="text" placeholder="Search Player...">
+            <button id="currentPlayerButton" type="button" onclick="selectCurrentPlayers()"><i id="iconStar" class="fa fa-star"></i></button>
+            <table id="playersTable"></table>
+        </div>
+        <div id="templateDiv">
+            <div id="innerTemplateDiv">
+                <img id = "template" draggable="false">
+
+                <div id = "slot1" class="playerSlot" ondrop = "drop(event)" ondragover="allowDrop(event)"></div>
+                <div id = "slot2" class="playerSlot" ondrop = "drop(event)" ondragover="allowDrop(event)"></div>
+                <div id = "slot3" class="playerSlot" ondrop = "drop(event)" ondragover="allowDrop(event)"></div>
+                <div id = "slot4" class="playerSlot" ondrop = "drop(event)" ondragover="allowDrop(event)"></div>
+            
+                <div id = "nameSlot1" class="nameSlot" onclick="showCustomNameDiv(1)"><p id="name1" class="name"></p></div>
+                <div id = "nameSlot2" class="nameSlot" onclick="showCustomNameDiv(2)"><p id="name2" class="name"></p></div>
+                <div id = "nameSlot3" class="nameSlot" onclick="showCustomNameDiv(3)"><p id="name3" class="name"></p></div>
+                <div id = "nameSlot4" class="nameSlot" onclick="showCustomNameDiv(4)"><p id="name4" class="name"></p></div>
+            </div>
+            <div id="buttonDiv">
+                <div id="teamIconOuterDiv">
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\red.png" onclick="selectColor('red')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\orange.png" onclick="selectColor('orange')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\yellow.png" onclick="selectColor('yellow')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\lime.png" onclick="selectColor('lime')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\green.png" onclick="selectColor('green')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\cyan.png" onclick="selectColor('cyan')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\aqua.png" onclick="selectColor('aqua')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\blue.png" onclick="selectColor('blue')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\purple.png" onclick="selectColor('purple')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\pink.png" onclick="selectColor('pink')"/></div>
+                </div>
+                <div class="iconButtonDiv" id="iconButtonDiv1">
+                    <button class="iconButton" type="button" onclick="selectNextType()"><i id="iconStar" class="fa fa-location-arrow"></i></button>
+                </div>
+                <div class="iconButtonDiv"  id="iconButtonDiv2">
+                    <button class="iconButton" type="button" onclick="randomizer()"><i class="fa fa-question"></i></button>
+                </div>
+                <div class="iconButtonDiv" id="iconButtonDiv3">
+                    <button class="iconButton" type="button" onclick="finishTeam()"><i id="iconCheck" class="fa fa-check"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="pop-on">
+        <div id="completedTeamDiv">
+            <div id="teamCanvasDiv"><canvas id="teamCanvas"></canvas></div>
+            <div id="avgScoreDiv"><p id="avgScore"></p></div>
+            <div id="completedTeamBtmDiv"><button id="completedTeamBtm" onclick="hidePopOns()">OK</button></div>
+        </div>
+    </div>
+
+    <div id="customNameOuterDiv">
+        <h2>Change Player's Name</h2>
+        <div id="custonNameInnerDiv">
+            <div id="inputNameDiv"><input id="inputName" type="text" placeholder="Custom Name..."></div>
+            <div id="completeCustomDiv"><button id="completeCustomBtm" onclick="changeCustomName()">OK</button></div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="script/script.js"></script>
+</body>
+</html>
