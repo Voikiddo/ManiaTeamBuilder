@@ -430,7 +430,7 @@ function hidePopOns() {
 // ------- Custom Name --------
 // change the player's name to custom name after clicking ok & hide the div
 function changeCustomName() {
-    let newName = $("#inputName").val();
+    let newName = $("#inputCustomName").val();
     $(`#name${CustomNameSlot}`).html(newName);
     $('#customNameOuterDiv').css('visibility', 'hidden');
     responseFontSize($(`#name${CustomNameSlot}`))
