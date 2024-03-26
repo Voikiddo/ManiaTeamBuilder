@@ -1,39 +1,37 @@
-// ==== GLOBAL VARIABLES ====
+// ==== GLOBAL letIABLES ====
 
-// the id in players_csv.csv
+// the id in mania_players.csv
 // player name is always 0
 const AVG_ID = 1;
 const SRC_ID = 2;
 
-var Data = [];
+let Data = [];
 
 // About current shown template
-var TemplateColor = "red";
-var allTemplateColor = ["red", "orange", "yellow", "lime", "green", "cyan", "aqua", "blue", "purple", "pink"];
+let TemplateColor = "red";
+let allTemplateColor = ["red", "orange", "yellow", "lime", "green", "white", "aqua", "blue", "purple", "pink"];
 
-var TemplateTypeId = 0;
-var TemplateType = "Regular";
-var TemplateTypes = ["Regular", "AllStars", "Pride"];
-var nameColors = {
-    "Regular": false,
-    "AllStars": true,
-    "Pride": false,
+let TemplateTypeId = 0;
+let TemplateType = "Mania";
+let TemplateTypes = ["Mania"];
+let nameColors = {
+    "Mania": false
 }
 
-var CustomNameSlot = 0;
+let CustomNameSlot = 0;
 
 // About current shown player table
-var ShowCurrentPlayers = false;
-var CurrentPlayers = [];
+let ShowCurrentPlayers = false;
+let CurrentPlayers = [];
 
 // Number to distinguish different img with the same player
-var distinguisherNum = 0;
+let distinguisherNum = 0;
 
 // ========== MAIN ==========
 
 // Get players from csv file
 // Draw the player table
-$.get("references/players_csv.csv", function(data, status){
+$.get("references/mania_players.csv", function(data, status){
     if (status == "success") {
         parseTxt(data);
         drawPlayersTable(Data);
@@ -48,7 +46,7 @@ drawTemplate();
 // Get the current players
 // Or get it from participants.json in reference
 // if can't get the API because of CORS
-makeCorsRequest();
+//makeCorsRequest();
 
 // Observe the change of the size, and readjust player slots when it happens
 const resize_ob = new ResizeObserver(function() {
@@ -68,10 +66,10 @@ $('#searchBar').bind('input', function() {
 // Handle the data from csv
 // Input: text of csv
 function parseTxt(text){
-    var rows = text.split('\n');
+    let rows = text.split('\n');
 
-    for (var row in rows) {
-        var cols = rows[row].split(',');
+    for (let row in rows) {
+        let cols = rows[row].split(',');
 
         if (cols.length != 3) continue;
 
@@ -88,9 +86,9 @@ function parseTxt(text){
   
 // Make the actual CORS request.
 function makeCorsRequest() {
-    var url = "https://api.mcchampionship.com/v1/participants";
+    let url = "https://api.mcchampionship.com/v1/participants";
   
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
 
     if (!xhr) {
@@ -99,7 +97,7 @@ function makeCorsRequest() {
     }
   
     xhr.onload = function() {
-        var text = xhr.responseText;
+        let text = xhr.responseText;
         parseJSON(text);
     };
   
@@ -116,20 +114,47 @@ function makeCorsRequest() {
 // Parse JSON Data about current players
 // Input: json data
 function parseJSON(text) {
-    var response = JSON.parse(text).data;
+    let response = JSON.parse(text).data;
     processCurrentPlayers(response)
 }
 
 // Process current players json data after it's converted
 // Input: converted json data
 function processCurrentPlayers(res) {
-    var allTeams = [res.RED, res.ORANGE, res.YELLOW, res.LIME, res.GREEN, res.CYAN, res.AQUA, res.BLUE, res.PURPLE, res.PINK]
-    for (var team of allTeams) {
-        for (var player of team) {
-            var playerData = findPlayerData(player.username)[0];
-            if (playerData != undefined) CurrentPlayers.push(playerData);
+    let allTeams = [res.RED, res.ORANGE, res.YELLOW, res.LIME, res.GREEN, res.AQUA, res.BLUE, res.PURPLE, res.PINK, res.WHITE]
+    for (let team of allTeams) {
+        if (team != undefined) {
+            for (let player of team) {
+                let playerData = findPlayerData(player.username)[0];
+                if (playerData != undefined) CurrentPlayers.push(playerData);
+            }
         }
     }
+}
+
+function prepareAddPlayer() {
+    $('#pop-on').css('visibility', 'visible');
+}
+
+function onPlayerSubmit() {
+    let name = $("#inputName").val()
+    console.log($("#inputSrc").prop("files")[0]);
+    let src = $("#inputSrc").prop("files")[0];
+
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+        addPlayer(name,event.target.result)
+        console.log(event.target.result);
+    });
+    reader.readAsDataURL(src);  
+
+    hidePopOns()
+}
+
+// Add player from local
+function addPlayer(name, avg=0, src) {
+    Data.unshift([name, avg, src])
+    drawPlayersTable(Data)
 }
 
 // ------- Draws --------
@@ -139,32 +164,10 @@ function processCurrentPlayers(res) {
 function drawPlayersTable(data) {
     if (data == []) return;
 
-    var N = data.length;
-    var n = Math.floor(N / 3);
-    var r = N % 3;
-
-    var html = '';
-
-    for(let i = 0; i < n; i++) {
-        html += '<tr class="playersTR">';
-        for (let j = 0; j < 3; j++) {
-            var playerN = 3 * i + j;
-            html += '<td class="playersTD" id=td_' + i + '_' + j + '>';
-            html += '<img class="playerPic" id="' + data[playerN][0] + '" src=' + data[playerN][SRC_ID] + ' draggable="true" ondragstart="drag(event)" ondrop = "dropPlayerPic(event)" ondragover="allowDrop(event)">';
-            html += '</td>';
-        }
-        html += '</tr>';
-    }
-
-    if (r != 0) {
-        html += '<tr class="playersTR">';
-        for (let j = 0; j < r; j++) {
-            var playerN = 3 * n + j;
-            html += '<td class="playersTD" id=td_' + (n-1) + '_' + j + '>';
-            html += '<img class="playerPic" id="' + data[playerN][0] + '" src=' + data[playerN][SRC_ID] + ' draggable="true" ondragstart="drag(event)" ondrop = "dropPlayerPic(event)" ondragover="allowDrop(event)">';
-            html += '</td>';
-        }
-        html += '</tr>';
+    let html = '';
+    html += '<button class="playerPic" id="addPlayer" onclick="prepareAddPlayer()">+</button>'
+    for (let i=0; i<data.length; i++) {
+        html += '<div class="playerDiv" id="div_' + data[i][0] + '"><img class="playerPic" id="' + data[i][0] + '" src=' + data[i][SRC_ID] + ' draggable="true" ondragstart="drag(event)" ondrop = "dropPlayerPic(event)" ondragover="allowDrop(event)"></div>';
     }
     
     $('#playersTable').html(html);
@@ -173,7 +176,7 @@ function drawPlayersTable(data) {
 // Draw the team template on the right
 // Input: templatePath = path from template
 function drawTemplate() {
-    var templatePath = `references/templates/${TemplateType}/${TemplateColor}.webp`
+    let templatePath = `references/templates/${TemplateType}/${TemplateColor}.png`
     $('#template').attr("src", templatePath);
     resizeSlots();
 }
@@ -181,40 +184,62 @@ function drawTemplate() {
 // Readjust the player slots in the template
 function resizeSlots() {
     // player slots
-    var templateWidth = $('#template').width();
-    var templateHeight = templateWidth * 1000 / 1778;
+    let templateWidth = $('#template').width();
+    let templateHeight = templateWidth * 1080 / 1920;
 
-    var initWidth = templateWidth * 0.079;
-    var sepaWidth = templateWidth * 0.2183;
-    var initHeight = templateHeight * 0.3246;
+    let slotSize = templateHeight / 1080 * 352;
 
-    var slotSize = templateWidth * 0.188;
+    $('#slot1').css('left', 0);
+    $('#slot1').css('top', 0);
+    $('#slot1').css('width', slotSize);
+    $('#slot1').css('height', slotSize);
+
+    $('#nameSlot1').css('left', slotSize + 1/12 * slotSize)
+    $('#nameSlot1').css('top', 1/4 * slotSize)
+    $('#nameSlot1').css('right', templateWidth / 2 + 1/12 * slotSize)
+    $('#nameSlot1').css('height', 1/3 * slotSize)
     
-    for (let i=1; i<=4; i++) {
-        var slotID = '#slot' + i;
-        $(slotID).css('left', initWidth + sepaWidth * (i-1));
-        $(slotID).css('top', initHeight);
-        $(slotID).css('width', slotSize);
-        $(slotID).css('height', slotSize);
-    }
+    $('#slot2').css('right', 0);
+    $('#slot2').css('top', 0);
+    $('#slot2').css('width', slotSize);
+    $('#slot2').css('height', slotSize);
 
-    // player name slots
-    var nameSlotInitWidth = templateWidth * 0.068;
-    var nameSlotInitHeight = templateHeight * 0.68;
-    var nameSlotWidth = templateWidth * 0.21;
-    var nameSlotHeight = templateWidth * 0.07;
-    for (let i=1; i<=4; i++) {
-        var slotID = '#nameSlot' + i;
-        $(slotID).css('left', nameSlotInitWidth + sepaWidth * (i-1));
-        $(slotID).css('top', nameSlotInitHeight);
-        $(slotID).css('width', nameSlotWidth);
-        $(slotID).css('height', nameSlotHeight);
-    }
+    $('#nameSlot2').css('right', slotSize + 1/12 * slotSize)
+    $('#nameSlot2').css('top', 1/4 * slotSize)
+    $('#nameSlot2').css('left', templateWidth / 2 + 1/12 * slotSize)
+    $('#nameSlot2').css('height', 1/3 * slotSize)
 
-    var nameSize = nameSlotWidth / 10;
-    for (let i=1; i<=4; i++) {
-        var slotID = '#name' + i;
-        $(slotID).css('font-size', nameSize);
+    $('#slot3').css('left', 0);
+    $('#slot3').css('top', templateHeight-slotSize);
+    $('#slot3').css('width', slotSize);
+    $('#slot3').css('height', slotSize);
+
+    $('#nameSlot3').css('left', slotSize + 1/12 * slotSize)
+    $('#nameSlot3').css('top', templateHeight - slotSize + 1/4 * slotSize)
+    $('#nameSlot3').css('right', templateWidth / 2 + 1/12 * slotSize)
+    $('#nameSlot3').css('height', 1/3 * slotSize)
+
+    $('#slot4').css('right', 0);
+    $('#slot4').css('top', templateHeight-slotSize);
+    $('#slot4').css('width', slotSize);
+    $('#slot4').css('height', slotSize);
+
+    $('#nameSlot4').css('right', slotSize + 1/12 * slotSize)
+    $('#nameSlot4').css('top', templateHeight - slotSize + 1/4 * slotSize)
+    $('#nameSlot4').css('left', templateWidth / 2 + 1/12 * slotSize)
+    $('#nameSlot4').css('height', 1/3 * slotSize)
+
+    $('#hline1').css('top', 32/33*slotSize)
+    $('#hline2').css('top', templateHeight - slotSize - 1/100*slotSize)
+}
+
+function responseFontSize(slot) {
+    let text = slot.html()
+    if (text.length < 10) {
+        slot.css('font-size', Math.floor(1.6*slot.width() / 10))
+    }
+    else {
+        slot.css('font-size', Math.floor(1.6*slot.width() / text.length))
     }
 }
 
@@ -223,18 +248,18 @@ function resizeSlots() {
 // Find the players user searched
 // Input: keyword (string)
 function findPlayer(keyword) {
-    var newData = findPlayerData(keyword) 
+    let newData = findPlayerData(keyword) 
     drawPlayersTable(newData);
 }
 
 // Find data using current shown data and a keyword
 function findPlayerData(keyword) {
-    var newData = []
-    var usingData = []
+    let newData = []
+    let usingData = []
     if (ShowCurrentPlayers) usingData = CurrentPlayers;
     else usingData = Data;
 
-    for (var player of usingData) {
+    for (let player of usingData) {
         if (player[0].toLowerCase().includes(keyword.toLowerCase())) {
             newData.push(player);
         } else if (keyword.toLowerCase().includes(player[0].toLowerCase())) {
@@ -277,7 +302,7 @@ function selectType() {
     TemplateType = TemplateTypes[TemplateTypeId];
 
     for (let i=1; i<=4; i++) {
-        var slotID = '#name' + i;
+        let slotID = '#name' + i;
         if (nameColors[TemplateType]) {
             $(slotID).css('color', "white");
         } else {
@@ -289,17 +314,17 @@ function selectType() {
 
 // Randomly choose 4 people as a team
 function selectRandomTeam() {
-    var team = [];
+    let team = [];
 
     for (let i=0; i<4; i++) {
-        var playerN = Math.floor(Math.random() * Data.length);
+        let playerN = Math.floor(Math.random() * Data.length);
         team.push(Data[playerN]);
     }
 
-    for (var playerN in team) {
-        var playerData = team[playerN];
-        var src = playerData[SRC_ID];
-        var slotN = parseInt(playerN) + 1;
+    for (let playerN in team) {
+        let playerData = team[playerN];
+        let src = playerData[SRC_ID];
+        let slotN = parseInt(playerN) + 1;
 
         $(`#slot${(slotN)}`).empty();
 
@@ -319,7 +344,7 @@ function selectRandomTeam() {
 }
 
 function randomizer() {
-    var randomColorID = Math.floor(Math.random() * allTemplateColor.length);
+    let randomColorID = Math.floor(Math.random() * allTemplateColor.length);
     selectColor(allTemplateColor[randomColorID]);
 
     TemplateTypeId = Math.floor(Math.random() * TemplateTypes.length);
@@ -332,39 +357,40 @@ function randomizer() {
 
 // Generate team picture after clicking the buttom
 function finishTeam() {
-    $('#pop-on').css('visibility', 'visible');
+    alert("Please use your browser's clip function peepoLove")
+    // $('#pop-on').css('visibility', 'visible');
 
-    var team = []
-    for (let i=1; i<=4; i++) {
-        var playerName = $('#name' + i).html();
-        if (playerName != "") team.push(playerName);
-    }
+    // let team = []
+    // for (let i=1; i<=4; i++) {
+    //     let playerName = $('#name' + i).html();
+    //     if (playerName != "") team.push(playerName);
+    // }
 
-    drawCanvas();
-    calcAvg(team);
+    // drawCanvas();
+    // calcAvg(team);
 }
 
 // Put the full team into a full canvas
 function drawCanvas() {
-    var templateObj = new Image();
+    let templateObj = new Image();
     templateObj.setAttribute('src', $('#template').attr('src'))
 
-    var canvas = document.getElementById("teamCanvas");
+    let canvas = document.getElementById("teamCanvas");
     canvas.width = templateObj.naturalWidth;
     canvas.height = templateObj.naturalHeight;
 
-    var context = canvas.getContext("2d");
+    let context = canvas.getContext("2d");
     context.drawImage( templateObj, 0, 0, templateObj.width, templateObj.height, 0, 0, canvas.width, canvas.height);
 
-    var slotInitX = 140;
-    var slotInitY = 325;
-    var slotSapaX = 388;
+    let slotInitX = 140;
+    let slotInitY = 325;
+    let slotSapaX = 388;
 
     for (let i=1; i<=4; i++) {
-        var x = slotInitX + slotSapaX * (i-1);
-        var y = slotInitY;
+        let x = slotInitX + slotSapaX * (i-1);
+        let y = slotInitY;
 
-        var slot = new Image();
+        let slot = new Image();
         slot.setAttribute('src', $('#slot' + i).children().attr('src'))
         context.drawImage( slot, 0, 0, slot.width, slot.height, x, y, 334, 334);
         
@@ -383,16 +409,16 @@ function drawCanvas() {
 
 // Calculate average scoring
 function calcAvg(team) {
-    var totalScore = 0;
-    for (var player of team) {
-        for (var data of Data) {
+    let totalScore = 0;
+    for (let player of team) {
+        for (let data of Data) {
             if (player == data[0]) {
                 totalScore += parseInt(data[AVG_ID]);
             }
         }
     }
 
-    var avgScore = totalScore / team.length;
+    let avgScore = totalScore / team.length;
     $("#avgScore").html(`Avg: ${avgScore}`);
 }
 
@@ -404,9 +430,10 @@ function hidePopOns() {
 // ------- Custom Name --------
 // change the player's name to custom name after clicking ok & hide the div
 function changeCustomName() {
-    var newName = $("#inputName").val();
+    let newName = $("#inputName").val();
     $(`#name${CustomNameSlot}`).html(newName);
     $('#customNameOuterDiv').css('visibility', 'hidden');
+    responseFontSize($(`#name${CustomNameSlot}`))
 }
 
 // Show the div after clicking player's name on template
@@ -429,13 +456,11 @@ function drag(ev) {
 
 // drop at a player slot
 function drop(ev) {
-    if (ev.target.className == 'playerPic') return;
-
-    var playerID = ev.dataTransfer.getData("player_on_drag");
-    var originalSlotID = ev.dataTransfer.getData("original_slot");
-
-    if ($(`#${originalSlotID}`).attr('class') == "playersTD") {
-        var src = $(`#${playerID}`).attr('src');
+    ev.preventDefault();
+    let playerID = ev.dataTransfer.getData("player_on_drag");
+    let originalSlotID = ev.dataTransfer.getData("original_slot");
+    if ($(`#${originalSlotID}`).hasClass("playerDiv")) {
+        let src = $(`#${playerID}`).attr('src');
         distinguisherNum++;
 
         jQuery('<img>', {
@@ -447,12 +472,15 @@ function drop(ev) {
             ondrop: 'dropPlayerPicOnT(event)',
         }).appendTo(`#${ev.target.id}`);
 
-        $(`#name${ev.target.id[4]}`).html(playerID);
+        let nameSlot = $(`#name${ev.target.id[4]}`)
+        nameSlot.html(playerID);
+        responseFontSize(nameSlot);
     } else {
         $(`#${playerID}`).detach().appendTo(`#${ev.target.id}`)
 
-        var originalName = $(`#name${originalSlotID[4]}`);
-        var newName = $(`#name${ev.target.id[4]}`);
+        let originalName = $(`#name${originalSlotID[4]}`);
+        let newName = $(`#name${ev.target.id[4]}`);
+        responseFontSize($(`#name${ev.target.id[4]}`))
 
         newName.html(originalName.html());
         originalName.html("");
@@ -461,13 +489,15 @@ function drop(ev) {
 
 // Drop at player table on the left
 function dropPlayerPic(ev) {
-    var player = $(`#${ev.dataTransfer.getData("player_on_drag")}`);
+    ev.preventDefault();
+    let player = $(`#${ev.dataTransfer.getData("player_on_drag")}`);
 
     if (player.parent().attr('class') == "playerSlot") {
-        var slotN = player.parent().attr('id')[4];
+        let slotN = player.parent().attr('id')[4];
 
         player.parent().html("");
         $(`#name${slotN}`).html("");
+        responseFontSize($(`#name${slotN}`));
     }
 
     return;
@@ -475,52 +505,58 @@ function dropPlayerPic(ev) {
 
 // Drop at player pic that's in the slot on the template
 function dropPlayerPicOnT(ev) {
-    var originalSlotID = ev.dataTransfer.getData("original_slot");
+    ev.preventDefault();
+    ev.stopPropagation();
+    let originalSlotID = ev.dataTransfer.getData("original_slot");
     if ($(`#${originalSlotID}`).attr('class') == 'playerSlot') {
         // Swap players between slots
-        var AN = originalSlotID[4];
-        var BN = ev.target.parentNode.id[4];
+        let AN = originalSlotID[4];
+        let BN = ev.target.parentNode.id[4];
 
         // exchange imgs
-        var slotA = $(`#${originalSlotID}`);
-        var slotB = $(`#slot${BN}`);
+        let slotA = $(`#${originalSlotID}`);
+        let slotB = $(`#slot${BN}`);
         
-        var playerAID = slotA.children(":first").attr('id');
-        var playerA = $(`#${playerAID}`);
+        let playerAID = slotA.children(":first").attr('id');
+        let playerA = $(`#${playerAID}`);
 
-        var playerBID = slotB.children(":first").attr('id');
-        var playerB =  $(`#${playerBID}`);
+        let playerBID = slotB.children(":first").attr('id');
+        let playerB =  $(`#${playerBID}`);
 
-        playerA.detach().appendTo(`#slot${BN}`)
-        playerB.detach().appendTo(`#slot${AN}`)
+        playerA.detach()
+        playerA.appendTo(slotB)
+        playerB.detach()
+        playerB.appendTo(slotA)
 
         // exchange names
-        var nameA = $(`#name${AN}`);
-        var nameB = $(`#name${BN}`);
+        let nameA = $(`#name${AN}`);
+        let nameB = $(`#name${BN}`);
 
-        var temp = nameA.html();
+        let temp = nameA.html();
         nameA.html(nameB.html());
         nameB.html(temp);
+        responseFontSize(nameA);
+        responseFontSize(nameB);
 
         return;
     } else {
         // Replace the player on the slot
-        var playerID = ev.dataTransfer.getData("player_on_drag");
-        var targetSlotID = ev.target.parentNode.id;
-        var src = $(playerID).attr('src');
-
-        $( `#${targetSlotID}`).html()
+        let playerID = ev.dataTransfer.getData("player_on_drag");
+        let targetSlotID = ev.target.parentNode.id;
+        let src = $(`#${playerID}`).attr('src');
 
         distinguisherNum++
-        jQuery('<img>', {
+        let newPlayerPic = jQuery('<img>', {
             id: playerID + distinguisherNum,
             class: 'playerPic',
             src: src,
             draggable: true,
             ondragstart: 'drag(event)',
             ondrop: 'dropPlayerPicOnT(event)',
-        }).appendTo(`#${targetSlotID}`);
+        });
+        $( `#${targetSlotID}`).children().replaceWith(newPlayerPic)
 
-        $(`name${targetSlotID[4]}`).html(playerID);
+        $(`#name${targetSlotID[4]}`).html(playerID);
+        responseFontSize( $(`#name${targetSlotID[4]}`));
     }
 }

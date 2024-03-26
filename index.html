@@ -11,14 +11,14 @@
 
 <body>
     <div id = "headerDiv">
-        <h1>MCC Team Builder</h1>
+        <h1 class="shadow-text">MANIA TEAM BUILDER</h1>
     </div>
 
     <section id="container">
         <div id="playersDiv">
             <input id="searchBar" type="text" placeholder="Search Player...">
             <button id="currentPlayerButton" type="button" onclick="selectCurrentPlayers()"><i id="iconStar" class="fa fa-star"></i></button>
-            <table id="playersTable"></table>
+            <div id="playersTable"></div>
         </div>
         <div id="templateDiv">
             <div id="innerTemplateDiv">
@@ -29,10 +29,13 @@
                 <div id = "slot3" class="playerSlot" ondrop = "drop(event)" ondragover="allowDrop(event)"></div>
                 <div id = "slot4" class="playerSlot" ondrop = "drop(event)" ondragover="allowDrop(event)"></div>
             
-                <div id = "nameSlot1" class="nameSlot" onclick="showCustomNameDiv(1)"><p id="name1" class="name"></p></div>
-                <div id = "nameSlot2" class="nameSlot" onclick="showCustomNameDiv(2)"><p id="name2" class="name"></p></div>
-                <div id = "nameSlot3" class="nameSlot" onclick="showCustomNameDiv(3)"><p id="name3" class="name"></p></div>
-                <div id = "nameSlot4" class="nameSlot" onclick="showCustomNameDiv(4)"><p id="name4" class="name"></p></div>
+                <div id = "nameSlot1" class="nameSlot" onclick="showCustomNameDiv(1)"><p id="name1" class="name shadow-text"></p></div>
+                <div id = "nameSlot2" class="nameSlot" onclick="showCustomNameDiv(2)"><p id="name2" class="name shadow-text"></p></div>
+                <div id = "nameSlot3" class="nameSlot" onclick="showCustomNameDiv(3)"><p id="name3" class="name shadow-text"></p></div>
+                <div id = "nameSlot4" class="nameSlot" onclick="showCustomNameDiv(4)"><p id="name4" class="name shadow-text"></p></div>
+
+                <hr id = "hline1" class="hline">
+                <hr id = "hline2" class="hline">
             </div>
             <div id="buttonDiv">
                 <div id="teamIconOuterDiv">
@@ -41,11 +44,11 @@
                     <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\yellow.png" onclick="selectColor('yellow')"/></div>
                     <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\lime.png" onclick="selectColor('lime')"/></div>
                     <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\green.png" onclick="selectColor('green')"/></div>
-                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\cyan.png" onclick="selectColor('cyan')"/></div>
                     <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\aqua.png" onclick="selectColor('aqua')"/></div>
                     <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\blue.png" onclick="selectColor('blue')"/></div>
                     <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\purple.png" onclick="selectColor('purple')"/></div>
                     <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\pink.png" onclick="selectColor('pink')"/></div>
+                    <div class="teamIconDiv"><input type="image" class="teamIcon" src=".\references\Team_icons\cyan.png" onclick="selectColor('white')"/></div>
                 </div>
                 <div class="iconButtonDiv" id="iconButtonDiv1">
                     <button class="iconButton" type="button" onclick="selectNextType()"><i id="iconStar" class="fa fa-location-arrow"></i></button>
@@ -62,9 +65,14 @@
 
     <div id="pop-on">
         <div id="completedTeamDiv">
-            <div id="teamCanvasDiv"><canvas id="teamCanvas"></canvas></div>
-            <div id="avgScoreDiv"><p id="avgScore"></p></div>
-            <div id="completedTeamBtmDiv"><button id="completedTeamBtm" onclick="hidePopOns()">OK</button></div>
+            <input type="text" name="name" id="inputName">
+            <!-- <input type="text" name="avg" id="inputAvg"> -->
+            <input type="file" name="src" id="inputSrc">
+            <div id="completedTeamBtmDiv"><button id="completedTeamBtm" onclick="onPlayerSubmit()">OK</button></div>
+
+            <!-- <div id="teamCanvasDiv"><canvas id="teamCanvas"></canvas></div>
+            <div id="avgScoreDiv"><p id="avgScore"></p></div> -->
+            <!-- <div id="completedTeamBtmDiv"><button id="completedTeamBtm" onclick="hidePopOns()">OK</button></div> -->
         </div>
     </div>
 

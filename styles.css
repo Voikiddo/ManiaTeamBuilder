@@ -1,13 +1,36 @@
 @font-face {
-    font-family: "Minecraftia";
-    src: url('references/font/MinecraftRegular-Bmg3.otf');
+    font-family: "Okine Sans";
+    src: url('references/font/OkineSansBlack.otf');
+}
 
-    font-family: "Minecraft Ten";
-    src: url('references/font/MinecraftTen-VGORe.ttf');
+.shadow-text {
+    font-family: "Okine Sans", sans-serif;
+    /* color: transparent;
+    text-shadow: 0px -4px 0px #fff, 0 0 0 #000;
+    font-size: 6rem;
+    margin-bottom: 1rem; */
+    /* color: transparent;
+    text-shadow:
+    0px 0px 2px rgb(255, 255, 255),
+    0px 0px 1px rgb(0, 0, 0),
+    0px 0px 2px rgb(0, 0, 0),
+    0px 0px 3px rgb(0, 0, 0),
+    0px 0px 4px rgb(0, 0, 0),
+    0px 0px 5px rgb(0, 0, 0),
+    0px 0px 6px rgb(0, 0, 0),
+    0px 0px 7px rgb(0, 0, 0); */
+    /* background-color: #474747;
+    -webkit-background-clip: text;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text; */
+    color: white;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
 }
 
 body {
-    background-color: rgb(255, 248, 240);
+    background-color: rgb(255, 229, 200);
     height: auto; width: auto;
 }
 
@@ -47,7 +70,7 @@ h1 {
 
 #playersDiv {
     float: left;
-    width: 23%;
+    width: 26%;
     padding: 1%;
 
     border-top: 0.3vw solid black; border-right: 0.3vw solid black; 
@@ -59,11 +82,31 @@ h1 {
 #searchBar { width:80%; height:30px; }
 #currentPlayerButton { width: 12%; height: 30px; }
 
-#playersTable { width:auto; height:auto; }
+#playersTable {
+    grid-gap: .3vw;
+    border-bottom: 2px solid #000;
+    border-top: 2px solid #000;
+    display: grid;
+    grid-template-columns: 5.5vw 5.5vw 5.5vw 5.5vw;
+    padding-bottom: 1vh;
+    padding-left: .5vw;
+    padding-top: 1vh;
+    width: 23vw;
+}
 .playersTR { width: auto; height:auto; }
-.playersTD { width: 30%; height: auto; }
+.playersTD { width: auto; height: auto; }
 
-.playerPic { width:100%;height:auto; }
+.playerPic { width:100%; height:auto; }
+.playerDiv { width:100%; aspect-ratio:1/1; overflow-y:hidden;}
+
+#addPlayer {
+    background: rgb(3, 82, 10);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4em;
+}
 
 /* -------- TEMPLATE -------- */
 
@@ -97,18 +140,34 @@ h1 {
 
 .playerSlot {
     position:absolute;
+    /* background-color: rgba(127, 255, 212, 0.548); */
+    overflow: hidden;
 }
 
 .nameSlot {
     position: absolute;
+    /* background-color: rgba(127, 229, 255, 0.548); */
 }
 
 .name {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
     margin-block-start: 0;
     margin-block-end: 0;
     text-align: center;
-    font-family: "Minecraftia";
-    color: black;
+    width: 100%;
+    height: 100%;
+}
+
+.hline {
+    height: 6px; width: 100%;
+    background-color: rgb(20, 20, 20);
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 7;
 }
 
 /* -------- BUTTONS -------- */
@@ -166,6 +225,12 @@ i {
     align-self: center;
 }
 
+/* ======== INPUT PLAYER ======== */
+
+#inputName {
+    width: 80%;
+}
+
 /* ======== FINISHED DIV ======== */
 
 #pop-on {
@@ -187,7 +252,7 @@ i {
 
 #completedTeamDiv {
     display:grid;
-    grid-template-columns: 75% 15% auto;
+    grid-template-columns: 30% 30% auto;
     grid-template-rows: 80% auto;
 }
 
@@ -216,7 +281,6 @@ i {
 #completedTeamBtm {
     position: relative;
     float: right;
-    top: 30%;
 }
 
 /* ======== CUSTOM NAME DIV ======== */
