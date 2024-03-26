@@ -231,6 +231,11 @@ function resizeSlots() {
 
     $('#hline1').css('top', 32/33*slotSize)
     $('#hline2').css('top', templateHeight - slotSize - 1/100*slotSize)
+
+    $('#eventNameSlot').css('top', 1/2*templateHeight+1/22*templateHeight)
+    $('#eventNameSlot').css('left', 1/2*templateWidth-1/2*$("#eventName").width())
+    $('#eventNameSlot').css('font-size', Math.floor(1.6*slotSize / 10))
+    
 }
 
 function responseFontSize(slot) {
@@ -439,7 +444,7 @@ function changeCustomName() {
 // Show the div after clicking player's name on template
 function showCustomNameDiv(id) {
     CustomNameSlot = id;
-    $("#inputName").val($(`#name${CustomNameSlot}`).html());
+    $("#inputCustomName").val($(`#name${CustomNameSlot}`).html());
     $('#customNameOuterDiv').css('visibility', 'visible');
 }
 
