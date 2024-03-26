@@ -152,7 +152,7 @@ function onPlayerSubmit() {
 }
 
 // Add player from local
-function addPlayer(name, avg=0, src) {
+function addPlayer(name, src, avg=0) {
     Data.unshift([name, avg, src])
     drawPlayersTable(Data)
 }
